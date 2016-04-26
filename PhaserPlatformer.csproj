@@ -32,6 +32,7 @@
     <Content Include="GameFiles\Assets\player.png" />
     <Content Include="GameFiles\Assets\sky.png" />
     <Content Include="GameFiles\Assets\star.png" />
+    <Content Include="GameFiles\Assets\trap.png" />
     <Content Include="index.html" />
     <Content Include="GameFiles\Phaser\phaser.min.js" />
   </ItemGroup>
