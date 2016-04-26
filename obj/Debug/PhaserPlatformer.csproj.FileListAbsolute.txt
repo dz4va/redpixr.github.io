@@ -1,0 +1,6 @@
+D:\GAU\Year 3\Spring\JS\Phaser\Tutorial\PhaserPlatformer\PhaserPlatformer\bin\PhaserPlatformer.dll.config
+D:\GAU\Year 3\Spring\JS\Phaser\Tutorial\PhaserPlatformer\PhaserPlatformer\bin\PhaserPlatformer.dll
+D:\GAU\Year 3\Spring\JS\Phaser\Tutorial\PhaserPlatformer\PhaserPlatformer\bin\PhaserPlatformer.pdb
+D:\GAU\Year 3\Spring\JS\Phaser\Tutorial\PhaserPlatformer\PhaserPlatformer\obj\Debug\PhaserPlatformer.csprojResolveAssemblyReference.cache
+D:\GAU\Year 3\Spring\JS\Phaser\Tutorial\PhaserPlatformer\PhaserPlatformer\obj\Debug\PhaserPlatformer.dll
+D:\GAU\Year 3\Spring\JS\Phaser\Tutorial\PhaserPlatformer\PhaserPlatformer\obj\Debug\PhaserPlatformer.pdb
