@@ -11,9 +11,6 @@ var PlatformerGameStates;
         function GameRunningState() {
             _super.call(this);
         }
-        GameRunningState.prototype.init = function () {
-            this.secondsLeft = this.game.time.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
-        };
         GameRunningState.prototype.preload = function () {
             var AssetsFolder = "GameFiles/Assets/";
             this.game.load.image("sky", AssetsFolder + "sky.png");
@@ -25,10 +22,6 @@ var PlatformerGameStates;
             this.game.load.audio("crystalpickup", MusicsFolder + "crystal.ogg");
             this.game.load.audio("bgmusic", MusicsFolder + "bgmusic.ogg");
         };
-        //init() {
-        //    this.game.time.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
-        //    this.game.time.events.autoDestroy = true;
-        //}
         GameRunningState.prototype.create = function () {
             // Create cursor keys
             this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -37,10 +30,6 @@ var PlatformerGameStates;
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 1000;
             // Sky
-            //this.sky = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, "sky");
-            //this.sky.pivot.x = this.sky.width / 2;
-            //this.sky.pivot.y = this.sky.height / 2;
-            //this.sky.scale.set(2);
             this.game.stage.backgroundColor = "#eee";
             // Platforms Group that contains ground and 2 ledges
             this.platforms = this.game.add.group();
@@ -62,7 +51,7 @@ var PlatformerGameStates;
             this.addLedge(3200, this.game.world.height - 64 - (this.game.world.height * 0.38), "ground", 0.8, 1);
             this.addLedge(3600, this.game.world.height - 64 - (this.game.world.height * 0.5), "ground", 0.8, 1);
             this.addLedge(3900, this.game.world.height - 64 - (this.game.world.height * 0.6), "ground", 0.8, 1);
-            var instr = this.game.add.text(window.innerWidth + 20, 20, "Collect the Fallen Crystals...", { font: "Garamond", fontSize: "80px", fill: "#999999" });
+            var instr = this.game.add.text(window.innerWidth + 20, 20, "Collect all the Fallen Crystals...", { font: "Garamond", fontSize: "80px", fill: "#999999" });
             // Player
             this.player = this.game.add.sprite(32, this.game.world.height - 150, "player");
             // Enable physics for the player
@@ -97,15 +86,6 @@ var PlatformerGameStates;
             this.pickupsound = this.game.add.audio("crystalpickup");
             this.bgmusic = this.game.add.audio("bgmusic");
             this.bgmusic.onDecoded.add(this.startMusic, this);
-            // Add Timer then
-            //this.secondsLeft = this.game.time.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
-            //this.secondsLeft = new Phaser.Timer(this.game, true);
-            this.seconds = this.game.add.text(20, 100, "Time Left: 0", { font: "Garamond", fontSize: "32px", fill: "#333355" });
-            this.seconds.smoothed = false;
-            this.seconds.fixedToCamera = true;
-            this.faded = false;
-            //this.secondsLeft.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
-            this.secondsLeft = this.game.time.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
         };
         GameRunningState.prototype.addLedge = function (x, y, key, scaleX, scaleY) {
             var ledge = this.platforms.create(x, y, key);
@@ -117,16 +97,11 @@ var PlatformerGameStates;
             this.bgmusic.play(undefined, 0, 0.9, true);
         };
         GameRunningState.prototype.update = function () {
-            this.seconds.text = "Time: " + this.secondsLeft.timer.seconds.toFixed(0);
             this.game.physics.arcade.collide(this.player, this.platforms);
             this.game.physics.arcade.collide(this.crystals, this.platforms);
             this.game.physics.arcade.overlap(this.player, this.crystals, this.collectStar, null, this);
             // Reset Players velocity movement
             this.player.body.velocity.x = 0;
-            //if (this.player.position.x >= 2000 && !this.faded) {
-            //    this.faded = true;
-            //    this.game.add.tween(this.instr).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 0, 0, true);
-            //}
             // Left Right movement
             if (this.cursors.left.isDown) {
                 // Move to the left
@@ -147,20 +122,14 @@ var PlatformerGameStates;
                 this.player.body.velocity.y = -700;
             }
             if (this.score >= 58 * 10) {
-                this.secondsLeft.timer.destroy();
                 this.game.world.bounds.setTo(0, 0, window.innerWidth, window.innerHeight);
                 this.game.state.start("GameWonState", true, true);
             }
         };
-        GameRunningState.prototype.gameOver = function () {
-            this.secondsLeft.timer.destroy();
-            this.game.world.bounds.setTo(0, 0, window.innerWidth, window.innerHeight);
-            this.game.state.start("GameLostState", true, true, this.score);
-        };
         GameRunningState.prototype.collectStar = function (player, star) {
             star.kill();
             this.score += 10;
-            this.scoreText.text = 'Star Score: ' + this.score;
+            this.scoreText.text = 'Crystal Score: ' + this.score;
             this.pickupsound.play(undefined, 0, 0.7);
         };
         return GameRunningState;
@@ -188,7 +157,7 @@ var PlatformerGameStates;
         };
         GameWonState.prototype.restartGame = function () {
             this.game.time.events.events = [];
-            this.game.state.start("GameStartState", true, true);
+            this.game.state.start("GameRunningState", true, true);
         };
         return GameWonState;
     }(Phaser.State));
@@ -245,7 +214,7 @@ var PlatformerGameStates;
         };
         GameLostState.prototype.startGame = function () {
             this.game.time.events.events = [];
-            this.game.state.start("GameStartState", true, true);
+            this.game.state.start("GameRunningState", true, true);
         };
         return GameLostState;
     }(Phaser.State));

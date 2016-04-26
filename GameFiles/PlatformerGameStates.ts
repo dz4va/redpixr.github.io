@@ -31,22 +31,12 @@ module PlatformerGameStates {
         pickupsound: Phaser.Sound;
         bgmusic: Phaser.Sound;
 
-        // Timer Event
-        secondsLeft: Phaser.TimerEvent;
-
         // Instructions text
         instr: Phaser.Text;
-
-        // Faded
-        faded: boolean;
 
 
         constructor() {
             super();
-        }
-
-        init() {
-            this.secondsLeft = this.game.time.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
         }
 
         preload() {
@@ -62,11 +52,6 @@ module PlatformerGameStates {
             this.game.load.audio("bgmusic", MusicsFolder + "bgmusic.ogg");
         }
 
-        //init() {
-        //    this.game.time.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
-        //    this.game.time.events.autoDestroy = true;
-        //}
-
         create() {
             // Create cursor keys
             this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -77,10 +62,6 @@ module PlatformerGameStates {
             this.game.physics.arcade.gravity.y = 1000;
 
             // Sky
-            //this.sky = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, "sky");
-            //this.sky.pivot.x = this.sky.width / 2;
-            //this.sky.pivot.y = this.sky.height / 2;
-            //this.sky.scale.set(2);
             this.game.stage.backgroundColor = "#eee";
 
             // Platforms Group that contains ground and 2 ledges
@@ -120,7 +101,7 @@ module PlatformerGameStates {
 
             this.addLedge(3900, this.game.world.height - 64 - (this.game.world.height * 0.6), "ground", 0.8, 1);
 
-            var instr = this.game.add.text(window.innerWidth + 20, 20, "Collect the Fallen Crystals...", { font: "Garamond", fontSize: "80px", fill: "#999999" });
+            var instr = this.game.add.text(window.innerWidth + 20, 20, "Collect all the Fallen Crystals...", { font: "Garamond", fontSize: "80px", fill: "#999999" });
 
             // Player
             this.player = this.game.add.sprite(32, this.game.world.height - 150, "player");
@@ -171,20 +152,6 @@ module PlatformerGameStates {
 
             this.bgmusic.onDecoded.add(this.startMusic, this);
 
-            // Add Timer then
-            //this.secondsLeft = this.game.time.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
-
-            //this.secondsLeft = new Phaser.Timer(this.game, true);
-
-            this.seconds = this.game.add.text(20, 100, "Time Left: 0",
-                { font: "Garamond", fontSize: "32px", fill: "#333355" });
-            this.seconds.smoothed = false;
-            this.seconds.fixedToCamera = true;
-
-            this.faded = false;
-
-            //this.secondsLeft.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
-            this.secondsLeft = this.game.time.events.loop(Phaser.Timer.SECOND * 50, this.gameOver, this);
         }
 
         addLedge(x, y, key, scaleX, scaleY) {
@@ -199,19 +166,12 @@ module PlatformerGameStates {
         }
 
         update() {
-            this.seconds.text = "Time: " + this.secondsLeft.timer.seconds.toFixed(0);
-
             this.game.physics.arcade.collide(this.player, this.platforms);
             this.game.physics.arcade.collide(this.crystals, this.platforms);
             this.game.physics.arcade.overlap(this.player, this.crystals, this.collectStar, null, this);
 
             // Reset Players velocity movement
             this.player.body.velocity.x = 0;
-
-            //if (this.player.position.x >= 2000 && !this.faded) {
-            //    this.faded = true;
-            //    this.game.add.tween(this.instr).to({ alpha: 0 }, 2000, Phaser.Easing.Linear.None, true, 0, 0, true);
-            //}
 
             // Left Right movement
             if (this.cursors.left.isDown) {
@@ -233,22 +193,15 @@ module PlatformerGameStates {
             }
 
             if (this.score >= 58 * 10) {
-                this.secondsLeft.timer.destroy();
                 this.game.world.bounds.setTo(0, 0, window.innerWidth, window.innerHeight);
                 this.game.state.start("GameWonState", true, true);
             }
         }
 
-        gameOver() {
-            this.secondsLeft.timer.destroy();
-            this.game.world.bounds.setTo(0, 0, window.innerWidth, window.innerHeight);
-            this.game.state.start("GameLostState", true, true, this.score);
-        }
-
         collectStar(player: Phaser.Sprite, star: Phaser.Sprite) {
             star.kill();
             this.score += 10;
-            this.scoreText.text = 'Star Score: ' + this.score;
+            this.scoreText.text = 'Crystal Score: ' + this.score;
             this.pickupsound.play(undefined, 0, 0.7);
         }
 
@@ -286,7 +239,7 @@ module PlatformerGameStates {
 
         restartGame() {
             this.game.time.events.events = [];
-            this.game.state.start("GameStartState", true, true);        
+            this.game.state.start("GameRunningState", true, true);        
         }
     }
 
@@ -363,7 +316,7 @@ module PlatformerGameStates {
 
         startGame() {
             this.game.time.events.events = [];
-            this.game.state.start("GameStartState", true, true);
+            this.game.state.start("GameRunningState", true, true);
         }
     }
 
